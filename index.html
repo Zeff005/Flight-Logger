@@ -290,6 +290,26 @@
     body {
       padding: 10px;
     }
+    
+    .container {
+      border-radius: 8px;
+    }
+    
+    .form-section, .receipt-section {
+      padding: 20px;
+    }
+    
+    button {
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (min-width: 969px) {
+    /* Ensure desktop maintains the same look */
+    .content {
+      grid-template-columns: 1fr 1fr;
+    }
   }
   
   @media print {
@@ -328,7 +348,7 @@
 
 <div class="container">
   <div class="header">
-    <h1>✈ INVA Receipt Generator</h1>
+    <h1>✈️ INVA Receipt Generator</h1>
     <div class="subtitle">Professional Flight Earnings & Receipt Management System</div>
   </div>
 
@@ -408,23 +428,23 @@
       <div class="form-row">
         <div class="form-group">
           <label>Passengers *</label>
-          <input type="number" id="passengers" placeholder="e.g. 150" min="0">
+          <input type="number" id="passengers" placeholder="e.g. 150" min="0" step="1">
         </div>
 
         <div class="form-group">
           <label>Cargo Weight (kg) *</label>
-          <input type="number" id="cargo" placeholder="e.g. 3000" min="0">
+          <input type="text" id="cargo" placeholder="e.g. 3000" inputmode="numeric">
         </div>
       </div>
 
       <div class="form-group">
         <label>Fuel Used (kg) *</label>
-        <input type="number" id="fuelused" placeholder="e.g. 20000" min="0">
+        <input type="number" id="fuelused" placeholder="e.g. 20000" min="0" step="1">
       </div>
 
       <div class="controls">
         <button type="button" id="sendBtn">📤 Submit Flight</button>
-        <button type="button" id="printBtn" class="secondary">🖨 Print / PDF</button>
+        <button type="button" id="printBtn" class="secondary">🖨️ Print / PDF</button>
       </div>
 
       <div id="alertBox" class="alert"></div>
@@ -509,12 +529,21 @@ function asNumber(x) {
 function parseTimeToHours(s) {
   if (!s) return 0;
   s = String(s).trim();
+  
+  // Handle HH:MM format
   if (s.includes(':')) {
     const parts = s.split(':').map(Number);
     return (parts[0] || 0) + (parts[1] || 0) / 60 + (parts[2] || 0) / 3600;
   }
+  
+  // Handle decimal
   const n = Number(s);
   return isNaN(n) ? 0 : n;
+}
+
+function formatTimeDisplay(s) {
+  if (!s) return '-';
+  return s;
 }
 
 function currency(n) {
@@ -528,12 +557,21 @@ function round2(n) {
 function showAlert(message, type) {
   const alertBox = document.getElementById('alertBox');
   alertBox.textContent = message;
-  alertBox.className = alert ${type};
+  alertBox.className = `alert ${type}`;
   alertBox.style.display = 'block';
   
   setTimeout(() => {
     alertBox.style.display = 'none';
   }, 5000);
+}
+
+// Debounce function for USD conversion
+let usdConversionTimeout;
+function debounce(func, delay) {
+  return function(...args) {
+    clearTimeout(usdConversionTimeout);
+    usdConversionTimeout = setTimeout(() => func.apply(this, args), delay);
+  };
 }
 
 // ========================================
@@ -604,9 +642,13 @@ function updateReceipt() {
   document.getElementById('rrank').textContent = rank || '-';
   document.getElementById('rcallsign').textContent = callsign ? 'INVA' + callsign : '-';
   document.getElementById('rflightnum').textContent = flightnum || '-';
-  document.getElementById('rroute').textContent = depicao && arricao ? ${depicao} → ${arricao} : '-';
+  document.getElementById('rroute').textContent = depicao && arricao ? `${depicao} → ${arricao}` : '-';
   document.getElementById('rair').textContent = aircraft || '-';
-  document.getElementById('rftime').textContent = ftime ? ${ftime} (${hrs.toFixed(2)}h) : '-';
+  
+  // Display time in original format
+  const displayTime = ftime;
+  document.getElementById('rftime').textContent = ftime ? `${displayTime} (${hrs.toFixed(2)}h)` : '-';
+  
   document.getElementById('rbase').textContent = currency(baseRate);
   document.getElementById('rmult').textContent = '×' + mult.toFixed(2);
   document.getElementById('rearn').textContent = currency(earnings);
@@ -614,7 +656,17 @@ function updateReceipt() {
   document.getElementById('rded').textContent = currency(deduction);
   document.getElementById('grand').textContent = currency(grandTotal);
 
-  // Fetch USD conversion
+  // Fetch USD conversion with debouncing
+  fetchUSDConversion(grandTotal);
+}
+
+// Debounced USD conversion function
+const fetchUSDConversion = debounce(function(grandTotal) {
+  if (grandTotal === 0) {
+    document.getElementById('rusd').textContent = '$0.00';
+    return;
+  }
+  
   fetch("https://api.frankfurter.app/latest?from=INR&to=USD")
     .then(res => res.json())
     .then(data => {
@@ -624,7 +676,7 @@ function updateReceipt() {
     .catch(() => {
       document.getElementById('rusd').textContent = '$0.00';
     });
-}
+}, 500); // 500ms delay for debouncing
 
 // ========================================
 // VALIDATION
@@ -636,7 +688,7 @@ function validateForm() {
   for (const id of required) {
     const el = document.getElementById(id);
     if (!el.value || el.value.trim() === '') {
-      showAlert(Please fill in the ${el.previousElementSibling.textContent.replace(' *', '')} field, 'error');
+      showAlert(`Please fill in the ${el.previousElementSibling.textContent.replace(' *', '')} field`, 'error');
       el.focus();
       return false;
     }
@@ -656,20 +708,20 @@ async function sendToDiscord(flightData) {
   }
 
   const embed = {
-    title: "✈ New Flight Submission",
+    title: "✈️ New Flight Submission",
     color: 0x0ea5a4,
     fields: [
-      { name: "👨‍✈ Pilot", value: flightData.pilot, inline: true },
-      { name: "🎖 Rank", value: flightData.rank, inline: true },
-      { name: "📞 Callsign", value: INVA${flightData.callsign}, inline: true },
+      { name: "👨‍✈️ Pilot", value: flightData.pilot, inline: true },
+      { name: "🎖️ Rank", value: flightData.rank, inline: true },
+      { name: "📞 Callsign", value: `INVA${flightData.callsign}`, inline: true },
       { name: "🔢 Flight Number", value: flightData.flightNumber, inline: true },
       { name: "🛫 Departure", value: flightData.departure, inline: true },
       { name: "🛬 Arrival", value: flightData.arrival, inline: true },
-      { name: "✈ Aircraft", value: flightData.aircraft, inline: true },
-      { name: "⏱ Flight Time", value: flightData.flightTime, inline: true },
+      { name: "✈️ Aircraft", value: flightData.aircraft, inline: true },
+      { name: "⏱️ Flight Time", value: flightData.flightTime, inline: true },
       { name: "👥 Passengers", value: flightData.passengers.toString(), inline: true },
-      { name: "📦 Cargo", value: ${flightData.cargo} kg, inline: true },
-      { name: "⛽ Fuel Used", value: ${flightData.fuelUsed} kg, inline: true },
+      { name: "📦 Cargo", value: `${flightData.cargo} kg`, inline: true },
+      { name: "⛽ Fuel Used", value: `${flightData.fuelUsed} kg`, inline: true },
       { name: "💰 Grand Total", value: flightData.grandTotal, inline: true }
     ],
     footer: {
@@ -701,4 +753,143 @@ async function sendToDiscord(flightData) {
 
 // ========================================
 // SEND TO GOOGLE SHEETS
-// ====================
+// ========================================
+
+async function sendToGoogleSheets(flightData) {
+  if (GOOGLE_SHEET_CONFIG.scriptUrl === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+    console.warn("Google Sheets script URL not configured");
+    return { success: false, error: "Google Sheets not configured" };
+  }
+
+  try {
+    const response = await fetch(GOOGLE_SHEET_CONFIG.scriptUrl, {
+      method: "POST",
+      mode: "no-cors", // Google Apps Script requires no-cors
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(flightData)
+    });
+
+    // Note: no-cors mode doesn't allow reading the response
+    // We assume success if no error is thrown
+    return { success: true };
+  } catch (error) {
+    console.error("Google Sheets error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+// ========================================
+// SUBMIT FLIGHT
+// ========================================
+
+async function submitFlight() {
+  if (!validateForm()) {
+    return;
+  }
+
+  updateReceipt();
+
+  // Gather flight data
+  const flightData = {
+    date: document.getElementById('rdate').textContent,
+    receiptNo: document.getElementById('rno').textContent,
+    pilot: document.getElementById('pilot').value,
+    rank: document.getElementById('rank').value,
+    callsign: document.getElementById('callsign').value,
+    flightNumber: document.getElementById('flightnum').value,
+    departure: document.getElementById('depicao').value.toUpperCase(),
+    arrival: document.getElementById('arricao').value.toUpperCase(),
+    aircraft: document.getElementById('aircraft').value,
+    flightTime: document.getElementById('ftime').value,
+    passengers: document.getElementById('passengers').value,
+    cargo: document.getElementById('cargo').value,
+    fuelUsed: document.getElementById('fuelused').value,
+    baseRate: document.getElementById('rbase').textContent,
+    multiplier: document.getElementById('rmult').textContent,
+    earnings: document.getElementById('rearn').textContent,
+    payloadBonus: document.getElementById('rbonus').textContent,
+    deductions: document.getElementById('rded').textContent,
+    grandTotal: document.getElementById('grand').textContent,
+    grandTotalUSD: document.getElementById('rusd').textContent
+  };
+
+  // Disable button during submission
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.disabled = true;
+  sendBtn.textContent = '⏳ Submitting...';
+
+  // Send to both Discord and Google Sheets
+  const [discordResult, sheetsResult] = await Promise.all([
+    sendToDiscord(flightData),
+    sendToGoogleSheets(flightData)
+  ]);
+
+  // Re-enable button
+  sendBtn.disabled = false;
+  sendBtn.textContent = '📤 Submit Flight';
+
+  // Show results
+  if (discordResult.success || sheetsResult.success) {
+    showAlert('✅ Flight submitted successfully!', 'success');
+  } else {
+    showAlert('⚠️ Submission completed with warnings. Check console for details.', 'error');
+  }
+}
+
+// ========================================
+// EVENT LISTENERS
+// ========================================
+
+// Input formatting and validation
+document.getElementById('ftime').addEventListener('input', function(e) {
+  updateReceipt();
+});
+
+document.getElementById('cargo').addEventListener('input', function(e) {
+  // Only allow digits
+  this.value = this.value.replace(/[^0-9]/g, '');
+  updateReceipt();
+});
+
+document.getElementById('callsign').addEventListener('input', function(e) {
+  // Only allow digits for callsign
+  this.value = this.value.replace(/[^0-9]/g, '');
+  updateReceipt();
+});
+
+document.getElementById('depicao').addEventListener('input', function(e) {
+  // Convert to uppercase
+  this.value = this.value.toUpperCase();
+  updateReceipt();
+});
+
+document.getElementById('arricao').addEventListener('input', function(e) {
+  // Convert to uppercase
+  this.value = this.value.toUpperCase();
+  updateReceipt();
+});
+
+document.getElementById('sendBtn').addEventListener('click', submitFlight);
+
+document.getElementById('printBtn').addEventListener('click', function() {
+  updateReceipt();
+  setTimeout(() => window.print(), 150);
+});
+
+// Live receipt preview - update on any input change
+const fieldsToWatch = ['pilot', 'rank', 'aircraft', 'flightnum', 'passengers', 'fuelused'];
+
+fieldsToWatch.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('input', updateReceipt);
+    el.addEventListener('change', updateReceipt);
+  }
+});
+
+// Initial update
+updateReceipt();
+</script>
+
+</body>
+</html>
