@@ -5,49 +5,347 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>INVA Receipt Generator</title>
 <style>
-  body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:18px; background:#f3f4f6; color:#0f172a; }
-  .wrap { max-width:900px; margin:0 auto; background:#fff; padding:18px; border-radius:10px; box-shadow:0 8px 30px rgba(2,6,23,0.08); }
-  h1 { font-size:18px; margin:0 0 6px; }
-  .muted { color:#475569; font-size:13px; }
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
-  label { display:block; font-size:13px; margin-bottom:6px; font-weight:500; }
-  input, select, textarea { width:100%; padding:8px; border-radius:8px; border:1px solid #e6e9ef; box-sizing:border-box; }
-  textarea { min-height:64px; }
-  .controls { display:flex; gap:8px; margin-top:12px; }
-  button { padding:8px 12px; border-radius:8px; border:none; background:#0ea5a4; color:#fff; cursor:pointer; font-size:14px; }
-  button:hover { background:#0d8f8e; }
-  .receipt { margin-top:18px; padding:14px; border:1px solid #e6e9ef; border-radius:8px; background:#ffffff; }
-  .rhead { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-  table { width:100%; border-collapse:collapse; margin-top:8px; }
-  td, th { padding:8px; border-bottom:1px solid #f1f5f9; text-align:left; }
-  .right { text-align:right; }
-  .small { font-size:13px; color:#475569; }
+  * { box-sizing: border-box; }
+  
+  body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #1e293b;
+  }
+  
+  .container { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    background: #ffffff; 
+    border-radius: 16px; 
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+  
+  .header {
+    background: linear-gradient(135deg, #0ea5a4 0%, #0d8f8e 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+  }
+  
+  .header h1 { 
+    margin: 0 0 8px; 
+    font-size: 32px;
+    font-weight: 600;
+  }
+  
+  .header .subtitle { 
+    opacity: 0.95;
+    font-size: 15px;
+  }
+  
+  .content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  
+  .form-section {
+    padding: 30px;
+    background: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+  }
+  
+  .receipt-section {
+    padding: 30px;
+    background: #ffffff;
+  }
+  
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 20px;
+    color: #0f172a;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #0ea5a4;
+  }
+  
+  .form-group { 
+    margin-bottom: 18px; 
+  }
+  
+  label { 
+    display: block; 
+    font-size: 14px; 
+    margin-bottom: 6px; 
+    font-weight: 500;
+    color: #334155;
+  }
+  
+  input, select, textarea { 
+    width: 100%; 
+    padding: 12px; 
+    border-radius: 8px; 
+    border: 1px solid #cbd5e1; 
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: white;
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #0ea5a4;
+    box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.1);
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .controls { 
+    display: flex; 
+    gap: 12px; 
+    margin-top: 24px; 
+  }
+  
+  button { 
+    flex: 1;
+    padding: 14px 20px; 
+    border-radius: 8px; 
+    border: none; 
+    background: #0ea5a4; 
+    color: #fff; 
+    cursor: pointer; 
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(14, 165, 164, 0.3);
+  }
+  
+  button:hover { 
+    background: #0d8f8e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(14, 165, 164, 0.4);
+  }
+  
+  button:active {
+    transform: translateY(0);
+  }
+  
+  button.secondary {
+    background: #64748b;
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+  }
+  
+  button.secondary:hover {
+    background: #475569;
+  }
+  
+  .receipt { 
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .receipt-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #0ea5a4;
+  }
+  
+  .receipt-header h2 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    color: #0ea5a4;
+  }
+  
+  .receipt-meta {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+  }
+  
+  .receipt-logo {
+    text-align: right;
+    font-weight: 600;
+    color: #0ea5a4;
+    font-size: 14px;
+  }
+  
+  table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-bottom: 16px;
+  }
+  
+  td, th { 
+    padding: 10px 12px; 
+    border-bottom: 1px solid #f1f5f9; 
+    text-align: left;
+    font-size: 14px;
+  }
+  
+  td:first-child {
+    color: #64748b;
+    font-weight: 500;
+  }
+  
+  td:last-child {
+    color: #0f172a;
+    font-weight: 600;
+  }
+  
+  .totals-table td {
+    padding: 12px;
+    font-size: 15px;
+  }
+  
+  .totals-table tr:last-child td {
+    border-top: 2px solid #0ea5a4;
+    border-bottom: 2px solid #0ea5a4;
+    padding: 14px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0ea5a4;
+  }
+  
+  .right { 
+    text-align: right; 
+  }
+  
+  .notes { 
+    margin-top: 20px; 
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+  
+  .alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+    animation: slideIn 0.3s ease;
+  }
+  
+  .alert.success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+  }
+  
+  .alert.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .helper-text {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 6px;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 968px) {
+    .content {
+      grid-template-columns: 1fr;
+    }
+    
+    .form-section {
+      border-right: none;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+    }
+    
+    body {
+      padding: 10px;
+    }
+  }
+  
   @media print {
-    body{background:#fff;margin:0;padding:20px;}
-    .wrap{box-shadow:none;padding:0;max-width:100%;}
-    .grid{display:block;}
-    .grid>div:first-child{display:none;}
-    .receipt{border:none;margin:0;padding:0;}
-    button{display:none;}
-    h1,.muted{display:none;}
+    body {
+      background: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .container {
+      box-shadow: none;
+      border-radius: 0;
+      max-width: 100%;
+    }
+    
+    .header, .form-section, .controls, button, .alert {
+      display: none !important;
+    }
+    
+    .content {
+      display: block;
+    }
+    
+    .receipt-section {
+      padding: 0;
+    }
+    
+    .receipt {
+      border: none;
+      box-shadow: none;
+    }
   }
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <h1>INVA Receipt Generator</h1>
-  <div class="muted">Enter flight details on the left, preview receipt on the right. All rates and multipliers are pre-loaded.</div>
+<div class="container">
+  <div class="header">
+    <h1>✈ INVA Receipt Generator</h1>
+    <div class="subtitle">Professional Flight Earnings & Receipt Management System</div>
+  </div>
 
-  <div class="grid">
-    <div>
-      <label>Pilot Name
-        <input type="text" id="pilot" placeholder="Rahul">
-      </label>
+  <div class="content">
+    <!-- Form Section -->
+    <div class="form-section">
+      <h3 class="section-title">Flight Details</h3>
+      
+      <div class="form-group">
+        <label>Pilot Name *</label>
+        <input type="text" id="pilot" placeholder="Enter pilot name">
+      </div>
 
-      <label>Rank
+      <div class="form-group">
+        <label>Rank *</label>
         <select id="rank">
-          <option value="">-- choose rank --</option>
+          <option value="">-- Select Rank --</option>
           <option value="Cadet / Trainee" data-rate="1333" data-maxbonus="750">Cadet / Trainee</option>
           <option value="Junior FO" data-rate="1800" data-maxbonus="1250">Junior FO</option>
           <option value="First Officer" data-rate="2600" data-maxbonus="2250">First Officer</option>
@@ -56,27 +354,37 @@
           <option value="Senior Captain" data-rate="3800" data-maxbonus="3750">Senior Captain</option>
           <option value="Chief Pilot" data-rate="4000" data-maxbonus="4250">Chief Pilot</option>
         </select>
-      </label>
+      </div>
 
-      <label>INVA Callsign (3 digits)
-        <input type="text" id="callsign" placeholder="e.g. 123" maxlength="3" pattern="\d{3}">
-      </label>
+      <div class="form-row">
+        <div class="form-group">
+          <label>INVA Callsign *</label>
+          <input type="text" id="callsign" placeholder="e.g. 123" maxlength="3" pattern="\d{3}">
+          <div class="helper-text">3 digits only</div>
+        </div>
 
-      <label>Flight Number
-        <input type="text" id="flightnum" placeholder="e.g. IX998">
-      </label>
+        <div class="form-group">
+          <label>Flight Number *</label>
+          <input type="text" id="flightnum" placeholder="e.g. IX998">
+        </div>
+      </div>
 
-      <label>Departure ICAO
-        <input type="text" id="depicao" placeholder="e.g. VIDP" maxlength="4">
-      </label>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Departure ICAO *</label>
+          <input type="text" id="depicao" placeholder="e.g. VIDP" maxlength="4">
+        </div>
 
-      <label>Arrival ICAO
-        <input type="text" id="arricao" placeholder="e.g. VABB" maxlength="4">
-      </label>
+        <div class="form-group">
+          <label>Arrival ICAO *</label>
+          <input type="text" id="arricao" placeholder="e.g. VABB" maxlength="4">
+        </div>
+      </div>
 
-      <label>Aircraft
+      <div class="form-group">
+        <label>Aircraft *</label>
         <select id="aircraft">
-          <option value="">-- choose aircraft --</option>
+          <option value="">-- Select Aircraft --</option>
           <option value="A319" data-mult="1.00">A319 — ×1.00</option>
           <option value="A320" data-mult="1.00">A320 — ×1.00</option>
           <option value="B738" data-mult="1.00">B738 — ×1.00</option>
@@ -89,40 +397,55 @@
           <option value="B744" data-mult="1.50">B744 — ×1.50</option>
           <option value="A350" data-mult="1.35">A350 — ×1.35</option>
         </select>
-      </label>
+      </div>
 
-      <label>Flight Time (hh:mm or decimal hours)
+      <div class="form-group">
+        <label>Flight Time *</label>
         <input type="text" id="ftime" placeholder="e.g. 03:34 or 3.5667">
-      </label>
+        <div class="helper-text">Format: hh:mm or decimal hours</div>
+      </div>
 
-      <label>Passengers Carried
-        <input type="number" id="passengers" placeholder="e.g. 150">
-      </label>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Passengers *</label>
+          <input type="number" id="passengers" placeholder="e.g. 150" min="0">
+        </div>
 
-      <label>Cargo Weight (kg)
-        <input type="number" id="cargo" placeholder="e.g. 3000">
-      </label>
+        <div class="form-group">
+          <label>Cargo Weight (kg) *</label>
+          <input type="number" id="cargo" placeholder="e.g. 3000" min="0">
+        </div>
+      </div>
 
-      <label>Fuel Used (kg)
-        <input type="number" id="fuelused" placeholder="e.g. 20000">
-      </label>
+      <div class="form-group">
+        <label>Fuel Used (kg) *</label>
+        <input type="number" id="fuelused" placeholder="e.g. 20000" min="0">
+      </div>
 
       <div class="controls">
-        <button type="button" id="sendBtn">Send</button>
-        <button type="button" id="printBtn">Print / Save PDF</button>
+        <button type="button" id="sendBtn">📤 Submit Flight</button>
+        <button type="button" id="printBtn" class="secondary">🖨 Print / PDF</button>
       </div>
-      <div class="small" style="margin-top:8px">Tip: choose Rank/Aircraft to auto-fill Base Rate & Multiplier.</div>
+
+      <div id="alertBox" class="alert"></div>
     </div>
 
-    <div>
+    <!-- Receipt Section -->
+    <div class="receipt-section">
+      <h3 class="section-title">Live Receipt Preview</h3>
+      
       <div class="receipt" id="receipt">
-        <div class="rhead">
+        <div class="receipt-header">
           <div>
-            <h2 style="margin:0">INVA RECEIPT</h2>
-            <div class="small">Receipt #: <span id="rno">VA-0001</span></div>
-            <div class="small">Date: <span id="rdate"></span></div>
+            <h2>INVA RECEIPT</h2>
+            <div class="receipt-meta">
+              <div>Receipt #: <strong id="rno">VA-0001</strong></div>
+              <div>Date: <strong id="rdate">-</strong></div>
+            </div>
           </div>
-          <div class="small">INVA — Career Mode</div>
+          <div class="receipt-logo">
+            INVA<br>Career Mode
+          </div>
         </div>
 
         <table>
@@ -131,174 +454,251 @@
             <tr><td>Rank</td><td id="rrank">-</td></tr>
             <tr><td>INVA Callsign</td><td id="rcallsign">-</td></tr>
             <tr><td>Flight Number</td><td id="rflightnum">-</td></tr>
-            <tr><td>Departure ICAO</td><td id="rdepicao">-</td></tr>
-            <tr><td>Arrival ICAO</td><td id="rarricao">-</td></tr>
+            <tr><td>Route</td><td id="rroute">-</td></tr>
             <tr><td>Aircraft</td><td id="rair">-</td></tr>
-            <tr><td>Flight Time (hh:mm)</td><td id="rftime">-</td></tr>
-            <tr><td>Base Rate (₹)</td><td id="rbase">0.00</td></tr>
-            <tr><td>Multiplier</td><td id="rmult">1.00</td></tr>
+            <tr><td>Flight Time</td><td id="rftime">-</td></tr>
+            <tr><td>Base Rate</td><td id="rbase">₹0.00</td></tr>
+            <tr><td>Multiplier</td><td id="rmult">×1.00</td></tr>
           </tbody>
         </table>
 
-        <table style="margin-top:8px">
+        <table class="totals-table">
           <tbody>
-            <tr><td><strong>Earnings (Flight)</strong></td><td class="right" id="rearn">0.00</td></tr>
-            <tr><td><strong>Payload Bonus</strong></td><td class="right" id="rbonus">0.00</td></tr>
-            <tr><td>Deductions (Taxes/Misc)</td><td class="right" id="rded">0.00</td></tr>
-            <tr><td><strong>Grand Total (Earnings + Bonus - Deduction)</strong></td><td class="right" id="grand">0.00</td></tr>
-            <tr><td><strong>Estimated Earnings (USD)</strong></td><td class="right" id="rusd">$0.00</td></tr>
+            <tr><td>Flight Earnings</td><td class="right" id="rearn">₹0.00</td></tr>
+            <tr><td>Payload Bonus</td><td class="right" id="rbonus">₹0.00</td></tr>
+            <tr><td>Deductions (15% Tax)</td><td class="right" id="rded">₹0.00</td></tr>
+            <tr><td>Grand Total</td><td class="right" id="grand">₹0.00</td></tr>
+            <tr><td>Estimated (USD)</td><td class="right" id="rusd">$0.00</td></tr>
           </tbody>
         </table>
 
-        <div style="margin-top:12px" class="small">Notes: Generated for INVA in-game use only. Do not use for fraudulent real-world claims.</div>
+        <div class="notes">
+          <strong>Note:</strong> This receipt is generated for INVA virtual airline use only. 
+          All calculations include base rate, aircraft multiplier, payload bonus (based on load factor 
+          and efficiency), and applicable deductions. Do not use for fraudulent real-world claims.
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function asNumber(x){var n=Number(String(x).replace(/[^0-9.-]/g,''));return isNaN(n)?0:n;}
-function parseTimeToHours(s){if(!s)return 0;s=String(s).trim();if(s.includes(':')){var p=s.split(':').map(Number);return(p[0]||0)+(p[1]||0)/60+(p[2]||0)/3600;}var n=Number(s);return isNaN(n)?0:n;}
-function currency(n){return'₹'+Number(Math.round(n*100)/100).toFixed(2);}
-function round2(n){return Math.round(n*100)/100;}
+// ========================================
+// CONFIGURATION - REPLACE WITH YOUR VALUES
+// ========================================
 
-function updateReceipt(){
-  var pilot=document.getElementById('pilot').value||'';
-  var rankEl=document.getElementById('rank');
-  var rank=rankEl.value;
-  var selRank=rankEl.options[rankEl.selectedIndex];
-  var baseRate=asNumber(selRank.getAttribute('data-rate'));
-  var maxBonus=asNumber(selRank.getAttribute('data-maxbonus'));
+// Discord Webhook URL - Replace with your actual webhook
+const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1424101218283946128/GuS7iqwSLSZyRR6yYgqu2yjjn3Y4nvEq6CG0rb_yT_lZxEdQaRGjGcSZvCDOtWf2GOHN";
 
-  var aircraftEl=document.getElementById('aircraft');
-  var aircraft=aircraftEl.value;
-  var mult=Number(aircraftEl.options[aircraftEl.selectedIndex].getAttribute('data-mult')||1);
+// Google Sheets Configuration
+const GOOGLE_SHEET_CONFIG = {
+  // Replace with your Google Apps Script Web App URL
+  scriptUrl: "https://script.google.com/macros/s/AKfycbzqTyCIr3opchA4aw7Tf7xF8LSXTU0KX1VSJdGkl4FmSj_Bi-so3oFne0NR0oeFKCQ/exec",
+  // The script will handle authentication and sheet operations
+};
 
-  var ftime=document.getElementById('ftime').value;
-  var hrs=parseTimeToHours(ftime);
+// ========================================
+// UTILITY FUNCTIONS
+// ========================================
+
+function asNumber(x) {
+  const n = Number(String(x).replace(/[^0-9.-]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+
+function parseTimeToHours(s) {
+  if (!s) return 0;
+  s = String(s).trim();
+  if (s.includes(':')) {
+    const parts = s.split(':').map(Number);
+    return (parts[0] || 0) + (parts[1] || 0) / 60 + (parts[2] || 0) / 3600;
+  }
+  const n = Number(s);
+  return isNaN(n) ? 0 : n;
+}
+
+function currency(n) {
+  return '₹' + Number(Math.round(n * 100) / 100).toFixed(2);
+}
+
+function round2(n) {
+  return Math.round(n * 100) / 100;
+}
+
+function showAlert(message, type) {
+  const alertBox = document.getElementById('alertBox');
+  alertBox.textContent = message;
+  alertBox.className = alert ${type};
+  alertBox.style.display = 'block';
+  
+  setTimeout(() => {
+    alertBox.style.display = 'none';
+  }, 5000);
+}
+
+// ========================================
+// RECEIPT CALCULATION & UPDATE
+// ========================================
+
+function updateReceipt() {
+  const pilot = document.getElementById('pilot').value || '';
+  const rankEl = document.getElementById('rank');
+  const rank = rankEl.value;
+  const selRank = rankEl.options[rankEl.selectedIndex];
+  const baseRate = asNumber(selRank.getAttribute('data-rate'));
+  const maxBonus = asNumber(selRank.getAttribute('data-maxbonus'));
+
+  const aircraftEl = document.getElementById('aircraft');
+  const aircraft = aircraftEl.value;
+  const mult = Number(aircraftEl.options[aircraftEl.selectedIndex].getAttribute('data-mult') || 1);
+
+  const ftime = document.getElementById('ftime').value;
+  let hrs = parseTimeToHours(ftime);
   hrs = round2(hrs);
 
-  var callsign=document.getElementById('callsign').value||'';
-  var flightnum=document.getElementById('flightnum').value||'';
-  var depicao=document.getElementById('depicao').value.toUpperCase()||'';
-  var arricao=document.getElementById('arricao').value.toUpperCase()||'';
+  const callsign = document.getElementById('callsign').value || '';
+  const flightnum = document.getElementById('flightnum').value || '';
+  const depicao = document.getElementById('depicao').value.toUpperCase() || '';
+  const arricao = document.getElementById('arricao').value.toUpperCase() || '';
 
-  var passengers=asNumber(document.getElementById('passengers').value);
-  var cargo=asNumber(document.getElementById('cargo').value);
-  var fuelused=asNumber(document.getElementById('fuelused').value);
+  const passengers = asNumber(document.getElementById('passengers').value);
+  const cargo = asNumber(document.getElementById('cargo').value);
+  const fuelused = asNumber(document.getElementById('fuelused').value);
 
-  var earnings = round2(hrs*baseRate*mult);
+  // Calculate earnings
+  const earnings = round2(hrs * baseRate * mult);
 
-  var seatCapMap={'A319':136,'A320':175,'B738':189,'B737 MAX':189,'A321':239,'B788':364,'B789':364,'B77W':503,'B77L':441,'B744':416,'A350':440};
-  var capacity=seatCapMap[aircraft]||0;
-  var LF=capacity?Math.min(passengers/capacity,1):0;
-  var Payload=passengers*95+cargo;
-  var PPP=fuelused?Payload/fuelused:0;
-  var PPP_ref=1;
-  var efficiencyRatio=PPP/PPP_ref;
-  var score=(LF+efficiencyRatio)/2;
-  if(score>1) score=1;
-  var payloadBonus=Math.min(score*maxBonus,maxBonus);
+  // Calculate payload bonus
+  const seatCapMap = {
+    'A319': 136, 'A320': 175, 'B738': 189, 'B737 MAX': 189,
+    'A321': 239, 'B788': 364, 'B789': 364, 'B77W': 503,
+    'B77L': 441, 'B744': 416, 'A350': 440
+  };
+  
+  const capacity = seatCapMap[aircraft] || 0;
+  const loadFactor = capacity ? Math.min(passengers / capacity, 1) : 0;
+  const payload = passengers * 95 + cargo;
+  const ppp = fuelused ? payload / fuelused : 0;
+  const pppRef = 1;
+  const efficiencyRatio = ppp / pppRef;
+  let score = (loadFactor + efficiencyRatio) / 2;
+  if (score > 1) score = 1;
+  
+  const payloadBonus = round2(Math.min(score * maxBonus, maxBonus));
 
-  var deduction = round2(earnings*0.15);
+  // Calculate deduction (15% of earnings)
+  const deduction = round2(earnings * 0.15);
 
-  var grand = round2(earnings + payloadBonus - deduction);
+  // Calculate grand total
+  const grandTotal = round2(earnings + payloadBonus - deduction);
 
-  var today=new Date();
-  var dateStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-  document.getElementById('rdate').textContent=dateStr;
-  document.getElementById('rno').textContent='VA-'+(Math.floor(Math.random()*9000)+1000);
-  document.getElementById('rpilot').textContent=pilot||'-';
-  document.getElementById('rrank').textContent=rank||'-';
-  document.getElementById('rcallsign').textContent=callsign?'INVA'+callsign:'-';
-  document.getElementById('rflightnum').textContent=flightnum||'-';
-  document.getElementById('rdepicao').textContent=depicao||'-';
-  document.getElementById('rarricao').textContent=arricao||'-';
-  document.getElementById('rair').textContent=aircraft||'-';
-  document.getElementById('rftime').textContent=ftime||'-';
-  document.getElementById('rbase').textContent=currency(baseRate);
-  document.getElementById('rmult').textContent=mult.toFixed(2);
+  // Update receipt display
+  const today = new Date();
+  const dateStr = today.getFullYear() + '-' + 
+                  String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                  String(today.getDate()).padStart(2, '0');
+  
+  document.getElementById('rdate').textContent = dateStr;
+  document.getElementById('rno').textContent = 'VA-' + (Math.floor(Math.random() * 9000) + 1000);
+  document.getElementById('rpilot').textContent = pilot || '-';
+  document.getElementById('rrank').textContent = rank || '-';
+  document.getElementById('rcallsign').textContent = callsign ? 'INVA' + callsign : '-';
+  document.getElementById('rflightnum').textContent = flightnum || '-';
+  document.getElementById('rroute').textContent = depicao && arricao ? ${depicao} → ${arricao} : '-';
+  document.getElementById('rair').textContent = aircraft || '-';
+  document.getElementById('rftime').textContent = ftime ? ${ftime} (${hrs.toFixed(2)}h) : '-';
+  document.getElementById('rbase').textContent = currency(baseRate);
+  document.getElementById('rmult').textContent = '×' + mult.toFixed(2);
+  document.getElementById('rearn').textContent = currency(earnings);
+  document.getElementById('rbonus').textContent = currency(payloadBonus);
+  document.getElementById('rded').textContent = currency(deduction);
+  document.getElementById('grand').textContent = currency(grandTotal);
 
-  document.getElementById('rearn').textContent=currency(earnings);
-  document.getElementById('rbonus').textContent=currency(payloadBonus);
-  document.getElementById('rded').textContent=currency(deduction);
-  document.getElementById('grand').textContent=currency(grand);
-
-  // INR → USD
+  // Fetch USD conversion
   fetch("https://api.frankfurter.app/latest?from=INR&to=USD")
-    .then(res=>res.json()).then(data=>{
-      var rate=data.rates.USD||0;
-      document.getElementById('rusd').textContent='$'+(grand*rate).toFixed(2);
-    }).catch(()=>{document.getElementById('rusd').textContent='$0.00';});
+    .then(res => res.json())
+    .then(data => {
+      const rate = data.rates.USD || 0;
+      document.getElementById('rusd').textContent = '$' + (grandTotal * rate).toFixed(2);
+    })
+    .catch(() => {
+      document.getElementById('rusd').textContent = '$0.00';
+    });
 }
 
-function calculateAndSend(){
-  updateReceipt();
+// ========================================
+// VALIDATION
+// ========================================
 
-  // Discord webhook
-//  const webhookURL = "https://discordapp.com/api/webhooks/1424101218283946128/GuS7iqwSLSZyRR6yYgqu2yjjn3Y4nvEq6CG0rb_yT_lZxEdQaRGjGcSZvCDOtWf2GOHN"; // <-- replace this
-  var pilot = document.getElementById('pilot').value || '';
-  var rank = document.getElementById('rank').value || '';
-  var dep = document.getElementById('depicao').value.toUpperCase() || '';
-  var arr = document.getElementById('arricao').value.toUpperCase() || '';
-  var aircraft = document.getElementById('aircraft').value || '';
-  var ftime = document.getElementById('ftime').value || '';
-  var pax = document.getElementById('passengers').value || '';
-  var cargo = document.getElementById('cargo').value || '';
-  var fuelused = document.getElementById('fuelused').value || '';
-  var grand = document.getElementById('grand').textContent || '';
+function validateForm() {
+  const required = ['pilot', 'rank', 'callsign', 'flightnum', 'depicao', 'arricao', 'aircraft', 'ftime', 'passengers', 'cargo', 'fuelused'];
+  
+  for (const id of required) {
+    const el = document.getElementById(id);
+    if (!el.value || el.value.trim() === '') {
+      showAlert(Please fill in the ${el.previousElementSibling.textContent.replace(' *', '')} field, 'error');
+      el.focus();
+      return false;
+    }
+  }
+  
+  return true;
+}
 
-  const payload = {
-    username: "INVA Bot",
-    embeds: [{
-      title: "Flight Submission",
-      color: 3447003,
-      fields:[
-        {name:"Pilot", value: pilot, inline:true},
-        {name:"Rank", value: rank, inline:true},
-        {name:"Departure", value: dep, inline:true},
-        {name:"Arrival", value: arr, inline:true},
-        {name:"Aircraft", value: aircraft, inline:true},
-        {name:"Flight Time", value: ftime, inline:true},
-        {name:"Passengers", value: pax, inline:true},
-        {name:"Cargo (kg)", value: cargo, inline:true},
-        {name:"Fuel Used (kg)", value: fuelused, inline:true},
-        {name:"Grand Total", value: grand, inline:true}
-      ],
-      timestamp: new Date()
-    }]
+// ========================================
+// SEND TO DISCORD
+// ========================================
+
+async function sendToDiscord(flightData) {
+  if (DISCORD_WEBHOOK_URL === "YOUR_DISCORD_WEBHOOK_URL_HERE") {
+    console.warn("Discord webhook URL not configured");
+    return { success: false, error: "Discord webhook not configured" };
+  }
+
+  const embed = {
+    title: "✈ New Flight Submission",
+    color: 0x0ea5a4,
+    fields: [
+      { name: "👨‍✈ Pilot", value: flightData.pilot, inline: true },
+      { name: "🎖 Rank", value: flightData.rank, inline: true },
+      { name: "📞 Callsign", value: INVA${flightData.callsign}, inline: true },
+      { name: "🔢 Flight Number", value: flightData.flightNumber, inline: true },
+      { name: "🛫 Departure", value: flightData.departure, inline: true },
+      { name: "🛬 Arrival", value: flightData.arrival, inline: true },
+      { name: "✈ Aircraft", value: flightData.aircraft, inline: true },
+      { name: "⏱ Flight Time", value: flightData.flightTime, inline: true },
+      { name: "👥 Passengers", value: flightData.passengers.toString(), inline: true },
+      { name: "📦 Cargo", value: ${flightData.cargo} kg, inline: true },
+      { name: "⛽ Fuel Used", value: ${flightData.fuelUsed} kg, inline: true },
+      { name: "💰 Grand Total", value: flightData.grandTotal, inline: true }
+    ],
+    footer: {
+      text: "INVA Flight Management System"
+    },
+    timestamp: new Date().toISOString()
   };
 
-  fetch(webhookURL, {method:"POST", headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
-// Show confirmation message
-    const msgDiv = document.createElement('div');
-    msgDiv.textContent = '✅ Flight submitted successfully!';
-    msgDiv.style.color = '#0ea5a4';
-    msgDiv.style.fontWeight = '500';
-    msgDiv.style.marginTop = '8px';
-    this.parentElement.appendChild(msgDiv);
+  try {
+    const response = await fetch(DISCORD_WEBHOOK_URL, {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: "INVA Flight Tracker",
+        embeds: [embed]
+      })
+    });
 
-    // Remove message after 3 seconds
-    setTimeout(() => {
-        msgDiv.remove();
-    }, 3000);
-});
+    if (response.ok) {
+      return { success: true };
+    } else {
+      return { success: false, error: "Discord API error" };
+    }
+  } catch (error) {
+    console.error("Discord error:", error);
+    return { success: false, error: error.message };
+  }
 }
 
-// Event listeners
-document.getElementById('sendBtn').addEventListener('click', calculateAndSend);
-document.getElementById('printBtn').addEventListener('click', function(){updateReceipt(); setTimeout(()=>window.print(),150);});
-
-// Live receipt preview only
-['pilot','rank','aircraft','ftime','flightnum','depicao','arricao','callsign','passengers','cargo','fuelused'].forEach(function(id){
-  var el=document.getElementById(id);
-  el.addEventListener('input', updateReceipt);
-  el.addEventListener('change', updateReceipt);
-});
-
-updateReceipt();
-</script>
-
-</body>
-</html>
-
+// ========================================
+// SEND TO GOOGLE SHEETS
+// ====================
