@@ -442,6 +442,12 @@
         <input type="number" id="fuelused" placeholder="e.g. 20000" min="0" step="1">
       </div>
 
+      <div class="form-group">
+        <label>XP Earned *</label>
+        <input type="text" id="xpearned" placeholder="e.g. 123456" maxlength="6" inputmode="numeric">
+        <div class="helper-text">6 digits only</div>
+      </div>
+
       <div class="controls">
         <button type="button" id="sendBtn">📤 Submit Flight</button>
         <button type="button" id="printBtn" class="secondary">🖨️ Print / PDF</button>
@@ -479,6 +485,7 @@
             <tr><td>Flight Time</td><td id="rftime">-</td></tr>
             <tr><td>Base Rate</td><td id="rbase">₹0.00</td></tr>
             <tr><td>Multiplier</td><td id="rmult">×1.00</td></tr>
+            <tr><td>XP Earned</td><td id="rxp">0</td></tr>
           </tbody>
         </table>
 
@@ -507,14 +514,35 @@
 // CONFIGURATION - REPLACE WITH YOUR VALUES
 // ========================================
 
-// Discord Webhook URL - Replace with your actual webhook
+/**
+ * SETUP INSTRUCTIONS:
+ * 
+ * 1. DISCORD WEBHOOK (Already configured):
+ *    - Your webhook URL is already set below
+ *    - Data will be sent to Discord including XP field
+ * 
+ * 2. GOOGLE SHEETS (New Independent Sheet):
+ *    - Create a NEW Google Sheet (separate from your old one)
+ *    - Open the Apps Script editor (Extensions → Apps Script)
+ *    - Paste the Apps Script code provided separately
+ *    - Follow the instructions in that script to deploy it
+ *    - Copy the Web App URL from deployment
+ *    - Paste it in scriptUrl below (replace the placeholder)
+ * 
+ * 3. SECURITY TOKEN:
+ *    - The token below must match the SECRET_TOKEN in your Apps Script
+ *    - Default: "INVA_CM_Logger_A5H7B28"
+ */
+
+// Discord Webhook URL - Already configured
 const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1424101218283946128/GuS7iqwSLSZyRR6yYgqu2yjjn3Y4nvEq6CG0rb_yT_lZxEdQaRGjGcSZvCDOtWf2GOHN";
 
-// Google Sheets Configuration
+// Google Sheets Configuration - FOR YOUR NEW INDEPENDENT SHEET
 const GOOGLE_SHEET_CONFIG = {
-  // Replace with your Google Apps Script Web App URL
-  scriptUrl: "https://script.google.com/macros/s/AKfycbzqTyCIr3opchA4aw7Tf7xF8LSXTU0KX1VSJdGkl4FmSj_Bi-so3oFne0NR0oeFKCQ/exec",
-  // The script will handle authentication and sheet operations
+  // Replace with your NEW Google Apps Script Web App URL after deployment
+  scriptUrl: "https://script.google.com/macros/s/AKfycbwynbzn2NdGV8e7kh9xOGQOsPlAIZg9PTuZRobSEwwNsCE89y8jtKElThR1ABQyfqqV/exec",
+  // Security token - must match SECRET_TOKEN in Apps Script
+  token: ""
 };
 
 // ========================================
@@ -602,6 +630,7 @@ function updateReceipt() {
   const passengers = asNumber(document.getElementById('passengers').value);
   const cargo = asNumber(document.getElementById('cargo').value);
   const fuelused = asNumber(document.getElementById('fuelused').value);
+  const xpearned = document.getElementById('xpearned').value || '0';
 
   // Calculate earnings
   const earnings = round2(hrs * baseRate * mult);
@@ -651,6 +680,7 @@ function updateReceipt() {
   
   document.getElementById('rbase').textContent = currency(baseRate);
   document.getElementById('rmult').textContent = '×' + mult.toFixed(2);
+  document.getElementById('rxp').textContent = xpearned;
   document.getElementById('rearn').textContent = currency(earnings);
   document.getElementById('rbonus').textContent = currency(payloadBonus);
   document.getElementById('rded').textContent = currency(deduction);
@@ -683,7 +713,7 @@ const fetchUSDConversion = debounce(function(grandTotal) {
 // ========================================
 
 function validateForm() {
-  const required = ['pilot', 'rank', 'callsign', 'flightnum', 'depicao', 'arricao', 'aircraft', 'ftime', 'passengers', 'cargo', 'fuelused'];
+  const required = ['pilot', 'rank', 'callsign', 'flightnum', 'depicao', 'arricao', 'aircraft', 'ftime', 'passengers', 'cargo', 'fuelused', 'xpearned'];
   
   for (const id of required) {
     const el = document.getElementById(id);
@@ -722,6 +752,7 @@ async function sendToDiscord(flightData) {
       { name: "👥 Passengers", value: flightData.passengers.toString(), inline: true },
       { name: "📦 Cargo", value: `${flightData.cargo} kg`, inline: true },
       { name: "⛽ Fuel Used", value: `${flightData.fuelUsed} kg`, inline: true },
+      { name: "⭐ XP Earned", value: flightData.xpEarned, inline: true },
       { name: "💰 Grand Total", value: flightData.grandTotal, inline: true }
     ],
     footer: {
@@ -756,21 +787,50 @@ async function sendToDiscord(flightData) {
 // ========================================
 
 async function sendToGoogleSheets(flightData) {
-  if (GOOGLE_SHEET_CONFIG.scriptUrl === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-    console.warn("Google Sheets script URL not configured");
+  if (GOOGLE_SHEET_CONFIG.scriptUrl === "YOUR_NEW_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+    console.warn("Google Sheets script URL not configured - skipping Google Sheets");
     return { success: false, error: "Google Sheets not configured" };
   }
+
+  // Prepare data in the format expected by the Apps Script
+  const sheetData = {
+    token: GOOGLE_SHEET_CONFIG.token, // Security token
+    date: flightData.date,
+    receipt_no: flightData.receiptNo,
+    pilot: flightData.pilot,
+    rank: flightData.rank,
+    flight_no: flightData.flightNumber,
+    dep: flightData.departure,
+    arr: flightData.arrival,
+    aircraft: flightData.aircraft,
+    flight_time_h: parseTimeToHours(flightData.flightTime),
+    flight_time_m: parseTimeToHours(flightData.flightTime) * 60,
+    passengers: parseInt(flightData.passengers) || 0,
+    cargo_kg: parseInt(flightData.cargo) || 0,
+    fuel_total_kg: parseInt(flightData.fuelUsed) || 0,
+    fuel_used_kg: parseInt(flightData.fuelUsed) || 0,
+    base_rate_inr_per_hr: parseFloat(flightData.baseRate.replace(/[^0-9.-]/g, '')) || 0,
+    multiplier: parseFloat(flightData.multiplier.replace(/[^0-9.-]/g, '')) || 0,
+    flight_earnings_inr: parseFloat(flightData.earnings.replace(/[^0-9.-]/g, '')) || 0,
+    payload_bonus_inr: parseFloat(flightData.payloadBonus.replace(/[^0-9.-]/g, '')) || 0,
+    deductions_inr: parseFloat(flightData.deductions.replace(/[^0-9.-]/g, '')) || 0,
+    grand_total_inr: parseFloat(flightData.grandTotal.replace(/[^0-9.-]/g, '')) || 0,
+    usd_est: parseFloat(flightData.grandTotalUSD.replace(/[^0-9.-]/g, '')) || 0,
+    xp_earned: parseInt(flightData.xpEarned) || 0,  // NEW XP FIELD
+    notes: "",
+    share_url: ""
+  };
 
   try {
     const response = await fetch(GOOGLE_SHEET_CONFIG.scriptUrl, {
       method: "POST",
-      mode: "no-cors", // Google Apps Script requires no-cors
+      mode: "no-cors",
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(flightData)
+      body: JSON.stringify(sheetData)
     });
 
-    // Note: no-cors mode doesn't allow reading the response
-    // We assume success if no error is thrown
+    // no-cors mode doesn't allow reading response, assume success if no error
+    console.log("Google Sheets: Data sent successfully");
     return { success: true };
   } catch (error) {
     console.error("Google Sheets error:", error);
@@ -789,7 +849,6 @@ async function submitFlight() {
 
   updateReceipt();
 
-  // Gather flight data
   const flightData = {
     date: document.getElementById('rdate').textContent,
     receiptNo: document.getElementById('rno').textContent,
@@ -804,6 +863,7 @@ async function submitFlight() {
     passengers: document.getElementById('passengers').value,
     cargo: document.getElementById('cargo').value,
     fuelUsed: document.getElementById('fuelused').value,
+    xpEarned: document.getElementById('xpearned').value,
     baseRate: document.getElementById('rbase').textContent,
     multiplier: document.getElementById('rmult').textContent,
     earnings: document.getElementById('rearn').textContent,
@@ -813,22 +873,18 @@ async function submitFlight() {
     grandTotalUSD: document.getElementById('rusd').textContent
   };
 
-  // Disable button during submission
   const sendBtn = document.getElementById('sendBtn');
   sendBtn.disabled = true;
   sendBtn.textContent = '⏳ Submitting...';
 
-  // Send to both Discord and Google Sheets
   const [discordResult, sheetsResult] = await Promise.all([
     sendToDiscord(flightData),
     sendToGoogleSheets(flightData)
   ]);
 
-  // Re-enable button
   sendBtn.disabled = false;
   sendBtn.textContent = '📤 Submit Flight';
 
-  // Show results
   if (discordResult.success || sheetsResult.success) {
     showAlert('✅ Flight submitted successfully!', 'success');
   } else {
@@ -840,31 +896,31 @@ async function submitFlight() {
 // EVENT LISTENERS
 // ========================================
 
-// Input formatting and validation
 document.getElementById('ftime').addEventListener('input', function(e) {
   updateReceipt();
 });
 
 document.getElementById('cargo').addEventListener('input', function(e) {
-  // Only allow digits
   this.value = this.value.replace(/[^0-9]/g, '');
   updateReceipt();
 });
 
+document.getElementById('xpearned').addEventListener('input', function(e) {
+  this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+  updateReceipt();
+});
+
 document.getElementById('callsign').addEventListener('input', function(e) {
-  // Only allow digits for callsign
   this.value = this.value.replace(/[^0-9]/g, '');
   updateReceipt();
 });
 
 document.getElementById('depicao').addEventListener('input', function(e) {
-  // Convert to uppercase
   this.value = this.value.toUpperCase();
   updateReceipt();
 });
 
 document.getElementById('arricao').addEventListener('input', function(e) {
-  // Convert to uppercase
   this.value = this.value.toUpperCase();
   updateReceipt();
 });
@@ -876,7 +932,6 @@ document.getElementById('printBtn').addEventListener('click', function() {
   setTimeout(() => window.print(), 150);
 });
 
-// Live receipt preview - update on any input change
 const fieldsToWatch = ['pilot', 'rank', 'aircraft', 'flightnum', 'passengers', 'fuelused'];
 
 fieldsToWatch.forEach(id => {
@@ -887,7 +942,6 @@ fieldsToWatch.forEach(id => {
   }
 });
 
-// Initial update
 updateReceipt();
 </script>
 
