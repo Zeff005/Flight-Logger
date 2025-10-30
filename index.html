@@ -8,39 +8,44 @@
   * { box-sizing: border-box; }
   
   body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a1a1a;
     min-height: 100vh;
-    color: #1e293b;
+    color: #e0e0e0;
+    line-height: 1.6;
   }
   
   .container { 
     max-width: 1200px; 
     margin: 0 auto; 
-    background: #ffffff; 
+    background: #2d2d2d;
     border-radius: 16px; 
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     overflow: hidden;
+    border: 2px solid #FFCB83;
   }
   
   .header {
-    background: linear-gradient(135deg, #0ea5a4 0%, #0d8f8e 100%);
-    color: white;
+    background: linear-gradient(135deg, #7B0F1D 0%, #5a0012 100%);
+    color: #FFFFFF;
     padding: 30px;
     text-align: center;
+    border-bottom: 4px solid #FFCB83;
   }
   
   .header h1 { 
     margin: 0 0 8px; 
     font-size: 32px;
-    font-weight: 600;
+    font-weight: 700;
+    color: #FFFFFF;
   }
   
   .header .subtitle { 
-    opacity: 0.95;
+    color: #FFCB83;
     font-size: 15px;
+    font-weight: 500;
   }
   
   .content {
@@ -51,22 +56,30 @@
   
   .form-section {
     padding: 30px;
-    background: #f8fafc;
-    border-right: 1px solid #e2e8f0;
+    background: rgba(0, 0, 0, 0.3);
+    border-right: 2px solid #FFCB83;
   }
   
   .receipt-section {
     padding: 30px;
-    background: #ffffff;
+    background: #2d2d2d;
   }
   
   .section-title {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0 0 20px;
-    color: #0f172a;
+    color: #FFCB83;
     padding-bottom: 10px;
-    border-bottom: 2px solid #0ea5a4;
+    border-bottom: 2px solid #FFCB83;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .section-title::before {
+    content: '☁';
+    font-size: 20px;
   }
   
   .form-group { 
@@ -77,24 +90,39 @@
     display: block; 
     font-size: 14px; 
     margin-bottom: 6px; 
-    font-weight: 500;
-    color: #334155;
+    font-weight: 600;
+    color: #e0e0e0;
   }
   
   input, select, textarea { 
     width: 100%; 
     padding: 12px; 
     border-radius: 8px; 
-    border: 1px solid #cbd5e1; 
+    border: 1px solid rgba(255, 203, 131, 0.3);
     font-size: 14px;
     transition: all 0.3s ease;
-    background: white;
+    background: rgba(255, 203, 131, 0.05);
+    color: #e0e0e0;
   }
   
   input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: #0ea5a4;
-    box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.1);
+    border-color: #FFCB83;
+    box-shadow: 0 0 0 3px rgba(255, 203, 131, 0.1);
+    background: rgba(255, 203, 131, 0.08);
+  }
+  
+  input::placeholder {
+    color: rgba(224, 224, 224, 0.5);
+  }
+  
+  select {
+    cursor: pointer;
+  }
+  
+  select option {
+    background: #2d2d2d;
+    color: #e0e0e0;
   }
   
   .form-row {
@@ -113,41 +141,50 @@
     flex: 1;
     padding: 14px 20px; 
     border-radius: 8px; 
-    border: none; 
-    background: #0ea5a4; 
-    color: #fff; 
+    border: 2px solid #FFCB83;
+    background: linear-gradient(135deg, #7B0F1D 0%, #5a0012 100%);
+    color: #FFFFFF; 
     cursor: pointer; 
     font-size: 15px;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(14, 165, 164, 0.3);
+    box-shadow: 0 4px 12px rgba(123, 15, 29, 0.4);
   }
   
   button:hover { 
-    background: #0d8f8e;
+    background: #FFCB83;
+    color: #2d2d2d;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(14, 165, 164, 0.4);
+    box-shadow: 0 6px 16px rgba(255, 203, 131, 0.4);
   }
   
   button:active {
     transform: translateY(0);
   }
   
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
   button.secondary {
-    background: #64748b;
-    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+    background: rgba(255, 203, 131, 0.1);
+    border-color: #FFCB83;
+    color: #FFCB83;
   }
   
   button.secondary:hover {
-    background: #475569;
+    background: #FFCB83;
+    color: #2d2d2d;
   }
   
   .receipt { 
-    background: #ffffff;
-    border: 2px solid #e2e8f0;
+    background: rgba(255, 203, 131, 0.05);
+    border: 2px solid #FFCB83;
     border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
   
   .receipt-header { 
@@ -156,26 +193,32 @@
     align-items: flex-start;
     margin-bottom: 24px;
     padding-bottom: 16px;
-    border-bottom: 2px solid #0ea5a4;
+    border-bottom: 2px solid #FFCB83;
   }
   
   .receipt-header h2 {
     margin: 0 0 8px;
     font-size: 24px;
-    color: #0ea5a4;
+    color: #FFCB83;
+    font-weight: 700;
   }
   
   .receipt-meta {
     font-size: 13px;
-    color: #64748b;
+    color: #d0d0d0;
     line-height: 1.6;
+  }
+  
+  .receipt-meta strong {
+    color: #FFCB83;
   }
   
   .receipt-logo {
     text-align: right;
-    font-weight: 600;
-    color: #0ea5a4;
+    font-weight: 700;
+    color: #FFCB83;
     font-size: 14px;
+    line-height: 1.4;
   }
   
   table { 
@@ -186,19 +229,23 @@
   
   td, th { 
     padding: 10px 12px; 
-    border-bottom: 1px solid #f1f5f9; 
+    border-bottom: 1px solid rgba(255, 203, 131, 0.2);
     text-align: left;
     font-size: 14px;
   }
   
   td:first-child {
-    color: #64748b;
+    color: #d0d0d0;
     font-weight: 500;
   }
   
   td:last-child {
-    color: #0f172a;
+    color: #FFCB83;
     font-weight: 600;
+  }
+  
+  tbody tr:hover {
+    background: rgba(255, 203, 131, 0.05);
   }
   
   .totals-table td {
@@ -206,13 +253,21 @@
     font-size: 15px;
   }
   
-  .totals-table tr:last-child td {
-    border-top: 2px solid #0ea5a4;
-    border-bottom: 2px solid #0ea5a4;
+  .totals-table tr:nth-last-child(2) td {
+    border-top: 2px solid #FFCB83;
     padding: 14px 12px;
     font-size: 16px;
     font-weight: 700;
-    color: #0ea5a4;
+    color: #FFCB83;
+    border-bottom: 1px solid rgba(255, 203, 131, 0.3);
+  }
+  
+  .totals-table tr:last-child td {
+    padding: 14px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFCB83;
+    border-bottom: 2px solid #FFCB83;
   }
   
   .right { 
@@ -222,11 +277,16 @@
   .notes { 
     margin-top: 20px; 
     padding: 12px;
-    background: #f8fafc;
-    border-radius: 8px;
+    background: rgba(123, 15, 29, 0.2);
+    border-left: 4px solid #7B0F1D;
+    border-radius: 4px;
     font-size: 12px;
-    color: #64748b;
+    color: #d0d0d0;
     line-height: 1.5;
+  }
+  
+  .notes strong {
+    color: #FFCB83;
   }
   
   .alert {
@@ -240,15 +300,15 @@
   }
   
   .alert.success {
-    background: #d1fae5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
   }
   
   .alert.error {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.3);
   }
   
   @keyframes slideIn {
@@ -264,19 +324,23 @@
   
   .helper-text {
     font-size: 12px;
-    color: #64748b;
+    color: rgba(224, 224, 224, 0.6);
     margin-top: 6px;
   }
   
   /* Mobile responsiveness */
   @media (max-width: 968px) {
+    body {
+      padding: 10px;
+    }
+    
     .content {
       grid-template-columns: 1fr;
     }
     
     .form-section {
       border-right: none;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 2px solid #FFCB83;
     }
     
     .form-row {
@@ -287,8 +351,8 @@
       font-size: 24px;
     }
     
-    body {
-      padding: 10px;
+    .header .subtitle {
+      font-size: 13px;
     }
     
     .container {
@@ -300,13 +364,109 @@
     }
     
     button {
-      padding: 12px 16px;
+      padding: 14px 18px;
       font-size: 14px;
+      min-height: 48px;
+    }
+    
+    input, select, textarea {
+      padding: 14px 12px;
+      font-size: 16px;
+      min-height: 48px;
+    }
+    
+    .section-title {
+      font-size: 16px;
+    }
+    
+    .receipt {
+      padding: 16px;
+    }
+    
+    .receipt-header {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .receipt-header h2 {
+      font-size: 20px;
+    }
+    
+    .receipt-logo {
+      text-align: left;
+    }
+    
+    table {
+      font-size: 13px;
+    }
+    
+    td, th {
+      padding: 8px;
+      font-size: 13px;
+    }
+    
+    .totals-table td {
+      font-size: 14px;
+    }
+    
+    .totals-table tr:nth-last-child(2) td,
+    .totals-table tr:last-child td {
+      font-size: 15px;
+    }
+    
+    .controls {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    button {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    body {
+      padding: 5px;
+    }
+    
+    .header {
+      padding: 20px 15px;
+    }
+    
+    .header h1 {
+      font-size: 20px;
+    }
+    
+    .header .subtitle {
+      font-size: 12px;
+    }
+    
+    .form-section, .receipt-section {
+      padding: 15px;
+    }
+    
+    .section-title {
+      font-size: 15px;
+    }
+    
+    .receipt {
+      padding: 12px;
+    }
+    
+    input, select, textarea {
+      font-size: 16px;
+    }
+    
+    label {
+      font-size: 13px;
+    }
+    
+    .helper-text {
+      font-size: 11px;
     }
   }
   
   @media (min-width: 969px) {
-    /* Ensure desktop maintains the same look */
     .content {
       grid-template-columns: 1fr 1fr;
     }
@@ -317,12 +477,15 @@
       background: #fff;
       margin: 0;
       padding: 20px;
+      color: #000;
     }
     
     .container {
       box-shadow: none;
       border-radius: 0;
       max-width: 100%;
+      border: none;
+      background: #fff;
     }
     
     .header, .form-section, .controls, button, .alert {
@@ -335,11 +498,35 @@
     
     .receipt-section {
       padding: 0;
+      background: #fff;
     }
     
     .receipt {
-      border: none;
+      border: 2px solid #000;
       box-shadow: none;
+      background: #fff;
+    }
+    
+    .receipt-header h2,
+    .receipt-logo,
+    .section-title,
+    td:last-child,
+    .receipt-meta strong {
+      color: #000 !important;
+    }
+    
+    td:first-child {
+      color: #333 !important;
+    }
+    
+    .notes {
+      background: #f5f5f5;
+      border-left-color: #333;
+      color: #000;
+    }
+    
+    .notes strong {
+      color: #000;
     }
   }
 </style>
@@ -494,8 +681,8 @@
             <tr><td>Flight Earnings</td><td class="right" id="rearn">₹0.00</td></tr>
             <tr><td>Payload Bonus</td><td class="right" id="rbonus">₹0.00</td></tr>
             <tr><td>Deductions (15% Tax)</td><td class="right" id="rded">₹0.00</td></tr>
-            <tr><td>Grand Total</td><td class="right" id="grand">₹0.00</td></tr>
-            <tr><td>Estimated (USD)</td><td class="right" id="rusd">$0.00</td></tr>
+            <tr><td>Final Earnings (INR)</td><td class="right" id="grand">₹0.00</td></tr>
+            <tr><td>Final Earnings (USD)</td><td class="right" id="rusd">$0.00</td></tr>
           </tbody>
         </table>
 
@@ -514,34 +701,10 @@
 // CONFIGURATION - REPLACE WITH YOUR VALUES
 // ========================================
 
-/**
- * SETUP INSTRUCTIONS:
- * 
- * 1. DISCORD WEBHOOK (Already configured):
- *    - Your webhook URL is already set below
- *    - Data will be sent to Discord including XP field
- * 
- * 2. GOOGLE SHEETS (New Independent Sheet):
- *    - Create a NEW Google Sheet (separate from your old one)
- *    - Open the Apps Script editor (Extensions → Apps Script)
- *    - Paste the Apps Script code provided separately
- *    - Follow the instructions in that script to deploy it
- *    - Copy the Web App URL from deployment
- *    - Paste it in scriptUrl below (replace the placeholder)
- * 
- * 3. SECURITY TOKEN:
- *    - The token below must match the SECRET_TOKEN in your Apps Script
- *    - Default: "INVA_CM_Logger_A5H7B28"
- */
-
-// Discord Webhook URL - Already configured
 const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1424101218283946128/GuS7iqwSLSZyRR6yYgqu2yjjn3Y4nvEq6CG0rb_yT_lZxEdQaRGjGcSZvCDOtWf2GOHN";
 
-// Google Sheets Configuration - FOR YOUR NEW INDEPENDENT SHEET
 const GOOGLE_SHEET_CONFIG = {
-  // Replace with your NEW Google Apps Script Web App URL after deployment
   scriptUrl: "https://script.google.com/macros/s/AKfycbwhH81uxuCUfuh2ZPAe-bDSokW9FORC7qSU6ILB7gLRJX504MHhBNZiSdqngXhhaMnX/exec",
-  // Security token - must match SECRET_TOKEN in Apps Script
   token: ""
 };
 
@@ -558,13 +721,11 @@ function parseTimeToHours(s) {
   if (!s) return 0;
   s = String(s).trim();
   
-  // Handle HH:MM format
   if (s.includes(':')) {
     const parts = s.split(':').map(Number);
     return (parts[0] || 0) + (parts[1] || 0) / 60 + (parts[2] || 0) / 3600;
   }
   
-  // Handle decimal
   const n = Number(s);
   return isNaN(n) ? 0 : n;
 }
@@ -593,7 +754,6 @@ function showAlert(message, type) {
   }, 5000);
 }
 
-// Debounce function for USD conversion
 let usdConversionTimeout;
 function debounce(func, delay) {
   return function(...args) {
@@ -632,10 +792,8 @@ function updateReceipt() {
   const fuelused = asNumber(document.getElementById('fuelused').value);
   const xpearned = document.getElementById('xpearned').value || '0';
 
-  // Calculate earnings
   const earnings = round2(hrs * baseRate * mult);
 
-  // Calculate payload bonus
   const seatCapMap = {
     'A319': 136, 'A320': 175, 'B738': 189, 'B737 MAX': 189,
     'A321': 239, 'B788': 364, 'B789': 364, 'B77W': 503,
@@ -652,14 +810,9 @@ function updateReceipt() {
   if (score > 1) score = 1;
   
   const payloadBonus = round2(Math.min(score * maxBonus, maxBonus));
-
-  // Calculate deduction (15% of earnings)
   const deduction = round2(earnings * 0.15);
-
-  // Calculate grand total
   const grandTotal = round2(earnings + payloadBonus - deduction);
 
-  // Update receipt display
   const today = new Date();
   const dateStr = today.getFullYear() + '-' + 
                   String(today.getMonth() + 1).padStart(2, '0') + '-' + 
@@ -674,7 +827,6 @@ function updateReceipt() {
   document.getElementById('rroute').textContent = depicao && arricao ? `${depicao} → ${arricao}` : '-';
   document.getElementById('rair').textContent = aircraft || '-';
   
-  // Display time in original format
   const displayTime = ftime;
   document.getElementById('rftime').textContent = ftime ? `${displayTime} (${hrs.toFixed(2)}h)` : '-';
   
@@ -686,11 +838,9 @@ function updateReceipt() {
   document.getElementById('rded').textContent = currency(deduction);
   document.getElementById('grand').textContent = currency(grandTotal);
 
-  // Fetch USD conversion with debouncing
   fetchUSDConversion(grandTotal);
 }
 
-// Debounced USD conversion function
 const fetchUSDConversion = debounce(function(grandTotal) {
   if (grandTotal === 0) {
     document.getElementById('rusd').textContent = '$0.00';
@@ -706,7 +856,7 @@ const fetchUSDConversion = debounce(function(grandTotal) {
     .catch(() => {
       document.getElementById('rusd').textContent = '$0.00';
     });
-}, 500); // 500ms delay for debouncing
+}, 500);
 
 // ========================================
 // VALIDATION
@@ -739,7 +889,7 @@ async function sendToDiscord(flightData) {
 
   const embed = {
     title: "✈️ New Flight Submission",
-    color: 0x0ea5a4,
+    color: 0x7B0F1D,
     fields: [
       { name: "👨‍✈️ Pilot", value: flightData.pilot, inline: true },
       { name: "🎖️ Rank", value: flightData.rank, inline: true },
@@ -792,9 +942,8 @@ async function sendToGoogleSheets(flightData) {
     return { success: false, error: "Google Sheets not configured" };
   }
 
-  // Prepare data in the format expected by the Apps Script
   const sheetData = {
-    token: GOOGLE_SHEET_CONFIG.token, // Security token
+    token: GOOGLE_SHEET_CONFIG.token,
     date: flightData.date,
     receipt_no: flightData.receiptNo,
     pilot: flightData.pilot,
@@ -816,7 +965,7 @@ async function sendToGoogleSheets(flightData) {
     deductions_inr: parseFloat(flightData.deductions.replace(/[^0-9.-]/g, '')) || 0,
     grand_total_inr: parseFloat(flightData.grandTotal.replace(/[^0-9.-]/g, '')) || 0,
     usd_est: parseFloat(flightData.grandTotalUSD.replace(/[^0-9.-]/g, '')) || 0,
-    xp_earned: parseInt(flightData.xpEarned) || 0,  // NEW XP FIELD
+    xp_earned: parseInt(flightData.xpEarned) || 0,
     notes: "",
     share_url: ""
   };
@@ -829,7 +978,6 @@ async function sendToGoogleSheets(flightData) {
       body: JSON.stringify(sheetData)
     });
 
-    // no-cors mode doesn't allow reading response, assume success if no error
     console.log("Google Sheets: Data sent successfully");
     return { success: true };
   } catch (error) {
@@ -947,4 +1095,3 @@ updateReceipt();
 
 </body>
 </html>
-
